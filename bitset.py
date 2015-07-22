@@ -1,7 +1,5 @@
 """
-This module contains datastructures for vertex and edge sets.
-We want to be indifferent whether a pointer to a vertex is supplied or a bitset
-representation.
+This module contains functionality for working with bitsets.
 """
 
 from math import log
@@ -115,7 +113,8 @@ def subsets_of_size(bitset, subsetsize):
     table[0] = [0]
     for b in iterate(bitset):
         for k in range(1, subsetsize + 1):
-            table[k].extend([subset | b for subset in table[k - 1] if not contains(subset, b)])
+            table[k].extend([subset | b for subset in table[k - 1]
+                             if not contains(subset, b)])
 
     #assert len(table[subsetsize]) == nCr(size(bitset), subsetsize)
     return table[subsetsize]
@@ -127,7 +126,8 @@ def subsets_by_size(bitset):
     table[0] = [0]
     for b in iterate(bitset):
         for k in range(1, s + 1):
-            table[k].extend([subset | b for subset in table[k - 1] if not contains(subset, b)])
+            table[k].extend([subset | b for subset in table[k - 1]
+                             if not contains(subset, b)])
 
     # print(table)
     # for k in range(1, s + 1):
@@ -146,7 +146,6 @@ def tolist(bitset, length):
         bitset >>= 1
         length -= 1
     return result
-
 
 
 #
