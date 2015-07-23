@@ -1,5 +1,5 @@
 from random import sample, random
-from .bitset import iterate, size, contains, bit, bits, disjoint, index, domain, tolist
+from bitset import iterate, size, contains, bit, bits, disjoint, index, domain, tolist
 
 
 class Graph:
