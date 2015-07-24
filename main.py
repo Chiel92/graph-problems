@@ -1,5 +1,7 @@
-from pixelgraph import *
+from pixelgraph import PixelGraph
 from plot import plot
+from independentset import bruteforce
+from bitset import tostring
 
 grid = [
     [0, 0, 5, 5, 5],
@@ -12,3 +14,4 @@ grid = [
 
 graph = PixelGraph(grid)
 plot(graph)
+print(tostring(bruteforce(graph)))
