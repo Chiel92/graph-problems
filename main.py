@@ -1,6 +1,6 @@
 from pixelgraph import PixelGraph
 from plot import plot
-from independentset import bruteforce
+from independentset import bruteforce, heuristic
 from bitset import tostring
 
 grid = [
@@ -15,3 +15,4 @@ grid = [
 graph = PixelGraph(grid)
 plot(graph)
 print(tostring(bruteforce(graph)))
+print(tostring(heuristic(graph)))
