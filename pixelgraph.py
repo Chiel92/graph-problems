@@ -4,33 +4,7 @@ This module contains the PixelGraph class.
 
 from graph import Graph
 from bitset import bit, bits
-
-
-def neighbor_cells(grid_dict, current_cell):
-    row, col = current_cell
-    for cell in [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]:
-        if cell in grid_dict:
-            yield cell
-
-
-def explore(grid_dict):
-    todo = [cell for cell in grid_dict]
-    fields = []
-
-    while todo:
-        front = [todo.pop()]
-        field = front[:]
-
-        while front:
-            current_cell = front.pop()
-            current_color = grid_dict[current_cell]
-            for neighbor_cell in neighbor_cells(grid_dict, current_cell):
-                if neighbor_cell in todo and grid_dict[neighbor_cell] == current_color:
-                    front.append(neighbor_cell)
-                    field.append(neighbor_cell)
-                    todo.remove(neighbor_cell)
-        fields.append(field)
-    print(fields)
+from random import choice
 
 
 class PixelGraph(Graph):
@@ -42,20 +16,17 @@ class PixelGraph(Graph):
     both synchronically.
     """
 
-    def __init__(self, grid):
+    def __init__(self, grid_dict):
         """The grid is a 2d array of numbers."""
-        self.grid = grid
+        self.grid_dict = grid_dict
+        self.grid_matrix = dict_to_matrix(grid_dict)
 
-        for row in grid:
+        for row in self.grid_matrix:
             if len(row) != self.grid_width:
                 raise ValueError('Input grid is not a valid matrix.')
             for val in row:
                 if val < 0:
                     raise ValueError('Input grid has negative numbers.')
-
-        # Mapping from cells to numbers
-        grid_dict = {(y, x): number for y, row in enumerate(grid)
-                     for x, number in enumerate(row)}
 
         # Detect fields by BFS
         todo = [cell for cell in grid_dict]
@@ -97,13 +68,89 @@ class PixelGraph(Graph):
 
     @property
     def grid_height(self):
-        return len(self.grid)
+        return len(self.grid_matrix)
 
     @property
     def grid_width(self):
-        return len(self.grid[0])
+        return len(self.grid_matrix[0])
+
+    def __str__(self):
+        return '\n'.join(' '.join(['{:4}'.format(val) for val in row])
+                         for row in self.grid_matrix)
+
+#
+# UTILS
+#
 
 
-def generate_random(grid_height, grid_width, nr_fields):
-    grid = []
+def neighbor_cells(cell_domain, current_cell):
+    row, col = current_cell
+    for cell in [(row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1)]:
+        if cell in cell_domain:
+            yield cell
+
+
+def explore(grid_dict):
+    todo = [cell for cell in grid_dict]
+    fields = []
+
+    while todo:
+        front = [todo.pop()]
+        field = front[:]
+
+        while front:
+            current_cell = front.pop()
+            current_color = grid_dict[current_cell]
+            for neighbor_cell in neighbor_cells(grid_dict, current_cell):
+                if neighbor_cell in todo and grid_dict[neighbor_cell] == current_color:
+                    front.append(neighbor_cell)
+                    field.append(neighbor_cell)
+                    todo.remove(neighbor_cell)
+        fields.append(field)
+    print(fields)
+
+
+def dict_to_matrix(grid_dict):
+    matrix = []
+    row = 0
+    while (row, 0) in grid_dict:
+        matrix.append([])
+        col = 0
+        while (row, col) in grid_dict:
+            matrix[row].append(grid_dict[row, col])
+            col += 1
+        row += 1
+    return matrix
+
+
+def matrix_to_dict(matrix):
+    return {(y, x): number for y, row in enumerate(matrix)
+            for x, number in enumerate(row)}
+
+#
+# GENERATORS
+#
+
+
+def random_walk(grid_height, grid_width, max_field_size):
+    unassigned = {(y, x) for x in range(grid_width) for y in range(grid_height)}
+    grid_dict = {}
+
+    number = 0
+    while unassigned:
+        cell = unassigned.pop()
+        grid_dict[cell] = number
+        for _ in range(max_field_size - 1):
+            unassigned_neighbors = list(neighbor_cells(unassigned, cell))
+            try:
+                next_cell = choice(unassigned_neighbors)
+                unassigned.remove(next_cell)
+            except IndexError:
+                break
+            else:
+                cell = next_cell
+                grid_dict[cell] = number
+        number += 1
+
+    return grid_dict
 
