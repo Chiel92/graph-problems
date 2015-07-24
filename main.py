@@ -11,7 +11,7 @@ grid = matrix_to_dict([
     [3, 3, 3, 3, 6],
 ])
 
-grid = random_walk(5, 10, 10)
+grid = random_walk(10, 10, 10)
 
 graph = PixelGraph(grid)
 print(graph)
