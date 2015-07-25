@@ -41,7 +41,7 @@ def check_decomposition(G, decomposition):
     return lboolw
 
 
-def incremental_un_heuristic(G, depth=0):
+def incremental_un_heuristic(G):
     lboolw_components = []
     decomposition_components = []
 
@@ -60,7 +60,7 @@ def incremental_un_heuristic(G, depth=0):
 
             for _ in range(size(component) - 1):
                 best_vertex, best_un, _ = greedy_step(G, left, right, un_left,
-                                                      booldim_left, depth, {}, Infinity)
+                                                      booldim_left, {}, Infinity)
                 booldim_left = len(best_un)
                 lboolw = max(lboolw, booldim_left)
                 un_left = best_un
@@ -81,7 +81,7 @@ def incremental_un_heuristic(G, depth=0):
     return total_lboolw, total_decomposition
 
 
-def greedy_step(G, left, right, un_left, booldim_left, depth, un_table, bound):
+def greedy_step(G, left, right, un_left, booldim_left, un_table, bound):
     best_vertex = None
     best_booldim = Infinity
     best_un = None
@@ -110,12 +110,6 @@ def greedy_step(G, left, right, un_left, booldim_left, depth, un_table, bound):
         if new_booldim >= bound:
             # print('pruning')
             continue
-
-        if depth > 0:
-            _, _, recursive_booldim = greedy_step(G, left | v, subtract(right, v), new_un,
-                                                  new_booldim, depth - 1, un_table,
-                                                  best_booldim)
-            new_booldim = max(new_booldim, recursive_booldim)
 
         if new_booldim < best_booldim:
             best_vertex = v

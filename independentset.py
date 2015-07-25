@@ -2,7 +2,7 @@
 This module contains routines concerning the maximum independent set problem.
 """
 from bitset import iterate, subsets, size, subtract
-from utils import Infinity
+from utils import Infinity, argmax
 
 def is_independent(graph, subset):
     for v in iterate(subset):
@@ -38,4 +38,27 @@ def heuristic(graph):
             return subset
         else:
             subset |= new_vertex
+
+def from_decomposition(graph, decomposition):
+    # Make hash function depend on neighborhood
+    solutions = {graph(0): 0}
+    right = graph.vertices
+
+    def add(collection, solution):
+        key = graph(solution) & right
+        if key not in collection or size(collection[key]) < size(solution):
+            collection[key] = solution
+
+    for v in decomposition:
+        new_solutions = {}
+        right -= v
+        for solution in solutions.values():
+            add(new_solutions, solution)
+            if is_independent(graph, solution | v):
+                add(new_solutions, solution | v)
+        solutions = new_solutions
+
+    result = argmax(solutions.values(), key=size)
+    assert is_independent(graph, result)
+    return result
 
