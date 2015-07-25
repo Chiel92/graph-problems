@@ -1,4 +1,4 @@
-from bitset import iterate, size, subtract, contains
+from bitset import iterate, size, subtract, contains, first
 from components import components
 from utils import Infinity
 
@@ -48,7 +48,8 @@ def incremental_un_heuristic(G):
     for component in components(G):
         best_lboolw = Infinity
         best_decomposition = None
-        for i, start in enumerate(iterate(component)):
+        for i, start in enumerate([first(component)]):
+        #for i, start in enumerate(iterate(component)):
             print('{}th starting vertex'.format(i))
             right = subtract(component, start)
             left = start

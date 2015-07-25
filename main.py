@@ -1,8 +1,10 @@
 from pixelgraph import *
 from plot import plot
 from independentset import bruteforce, heuristic, from_decomposition
-from bitset import tostring, iterate
+from bitset import tostring, iterate, size
 from lboolw_heuristic import incremental_un_heuristic
+
+from random import randint
 
 #grid = matrix_to_dict([
     #[0, 0, 5, 5, 5],
@@ -12,17 +14,24 @@ from lboolw_heuristic import incremental_un_heuristic
     #[3, 3, 3, 3, 6],
 #])
 
-grid = random_walk(20, 20, 20)
+while 1:
+    width = randint(5, 25)
+    height = randint(5, 25)
+    max_field_size = randint(5, 25)
+    grid = random_walk(width, height, max_field_size)
 
-graph = PixelGraph(grid)
+    graph = PixelGraph(grid)
+    width, decomposition = incremental_un_heuristic(graph)
+    heuristic_solution = heuristic(graph)
+    exact_solution = from_decomposition(graph, decomposition)
+    if size(heuristic_solution) < size(exact_solution) / 1.2:
+        break
+
 print(graph)
+print(tostring(heuristic_solution))
+print(tostring(exact_solution))
 #Possible engines: dot, neato, fdp, sfdp, twopi, circo
 plot(graph, 'neato')
 
-width, decomposition = incremental_un_heuristic(graph)
-
-
-print(tostring(heuristic(graph)))
-print(tostring(from_decomposition(graph, decomposition)))
 #print(tostring(from_decomposition(graph, iterate(graph.vertices))))
 #print(tostring(bruteforce(graph)))

@@ -152,5 +152,11 @@ def random_walk(grid_height, grid_width, max_field_size):
                 grid_dict[cell] = number
         number += 1
 
+    # Merge singlepixel fields into surroundings
+    for cell, number in grid_dict.items():
+        if not any([grid_dict[neighbor] == number
+                    for neighbor in neighbor_cells(grid_dict, cell)]):
+            grid_dict[cell] = grid_dict[next(neighbor_cells(grid_dict, cell))]
+
     return grid_dict
 
