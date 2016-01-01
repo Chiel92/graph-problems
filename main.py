@@ -15,8 +15,8 @@ from random import randint
 #])
 
 while 1:
-    width = randint(5, 25)
-    height = randint(5, 25)
+    width = randint(5, 35)
+    height = 40 - width
     max_field_size = randint(5, 25)
     grid = random_walk(width, height, max_field_size)
 
@@ -24,7 +24,7 @@ while 1:
     width, decomposition = incremental_un_heuristic(graph)
     heuristic_solution = heuristic(graph)
     exact_solution = from_decomposition(graph, decomposition)
-    if size(heuristic_solution) < size(exact_solution) / 1.2:
+    if size(heuristic_solution) < size(exact_solution) - 3:
         break
 
 print(graph)
