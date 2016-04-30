@@ -13,7 +13,7 @@ class Graph:
         return self._vertices
 
     def __repr__(self):
-        return 'vertices: {}'.format(list(self.vertices))
+        return 'vertices: {}'.format(list(iterate(self.vertices)))
 
     def __str__(self):
         return repr(self)

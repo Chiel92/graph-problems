@@ -5,14 +5,21 @@ from bitset import BitSet, index
 from graphviz import Graph
 
 
-def plot(graph, engine='dot', filename='output/test'):
-    """Possible engines: dot, neato, fdp, sfdp, twopi, circo"""
+def plot(graph, engine='dot', filename='output/test', vertex_names={}):
+    """
+    Possible engines: dot, neato, fdp, sfdp, twopi, circo
+    Vertex_names is an optional dict from vertices to strings.
+    """
     g = Graph(format='png', engine=engine)
+
+    def vertex_to_string(v):
+        return (vertex_names[v] if v in vertex_names else '') + ' ({})'.format(str(index(v)))
+
     for v in graph:
-        g.node(str(index(v)))
+        g.node(vertex_to_string(v))
 
     for v, w in graph.edges:
-        g.edge(str(index(v)), str(index(w)))
+        g.edge(vertex_to_string(v), vertex_to_string(w))
 
     g.render(filename)
 
